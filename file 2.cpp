@@ -1,97 +1,98 @@
-#include<iostream>
-#include<fstream>
-#include<cmath>
+#include <iostream>
+#include <fstream>
+
 using namespace std;
-void docfile(ifstream &file, int a[][50], int &d, int &c)
+
+int tongso(ifstream &file)
+{
+	int dem=0,temp;
+	while(file>>temp)
+	dem++;
+	file.clear();
+	file.seekg(0,ios::beg);
+	return dem;
+	file.close();
+}
+void docfile(ifstream &file, int *a, int &n)
 {
 	file.open("input.txt");
-	file>>d>>c;
-	for(int i=0;i<d;i++)
-	{
-		for(int j=0;j<c;j++)
-		{
-			file>>a[i][j];
+	n=tongso(file);
+	for(int i=0;i<n;i++)
+	file>>a[i];
+	file.close();
+}
+ int ucln(int a, int b)
+ {
+ 	while(b!=0)
+ 	{
+ 		int t=a%b;
+		 a=b;b=t;	
+	}
+	return a;
+ }
+ void sntcungnhau(int a[], int n,ofstream &file)
+ {
+ 	int dem=0;
+ 	for(int i=0;i<n;i++)
+ 	{
+ 		for(int j=i+1;j<n;j++)
+ 		{
+ 			if(ucln(a[i],a[j])==1) dem++;
 		}
 	}
-}
-int tinhtong(int a[][50], int d, int c)
-{
-	int tong=0;
-	for(int i=0;i<d;i++)
-	{
-		for(int j=0;j<c;j++)
-		{
-			tong+=a[i][j];
+	file<<"so luong snt cung nhau la "<<dem;
+ }
+ void hv(int &a, int &b)
+ {
+ 	int t=a;a=b;b=t;
+ }
+ void selection(int a[], int n)
+ {
+ 	
+ 	for(int i=0;i<n-1;i++)
+ 	{
+ 		int min_index =i;
+ 		for(int j=i+1;j<n;j++)
+ 		{
+ 			if(a[i]>a[j])
+ 			min_index=j;
 		}
+		hv(a[i],a[min_index]);
 	}
-	return tong;
-}
-void tongdong(int a[][50], int d, int c,ofstream &file)
-{
-
-	for(int i=0;i<d;i++)
-	{	
-		int tong=0;
-		for(int j=0;j<c;j++)
-		{
-			tong=tong+a[i][j];
-		}
-		file<<"tong dong thu "<<i+1<<tong<<endl;
+ }
+ void nhatnhi(int a[], int n, ofstream &file)
+ {
+ 	selection(a,n);
+ 	file<<"gtr lon nhat "<<a[n-1]<<endl;
+ 	file<<" gtr lon nhi "<<a[n-2]<<endl;
+ }
+ void dainhat(int a[], int n, ofstream &file)
+ {
+ 	int dem=1;
+ 	for(int i=0;i<n-1;i++)
+ 	{
+ 		if(a[i]<a[i+1])
+ 			dem++;
+ 		else dem=1;
 	}
+	file<<"day con dai nhat khong giam co "<<dem<<" phan tu";
+ }
+int main() {
+    ifstream file;
+	int n=tongso(file);
+    int *a=new int [n];
+    docfile(file,a,n);
+    
+    ofstream file1;
+    file1.open("output.txt");
+    
+    file1<<"tong so luong phan tu la "<<n<<endl;
+    sntcungnhau(a,n,file1);
+    nhatnhi(a,n,file1);
+    dainhat(a,n,file1);
+    
+    delete []a;
+    file1.close();
+    return 0;
 }
-void tongcot(int a[][50], int d, int c,ofstream &file)
-{
-
-	for(int i=0;i<c;i++)
-	{	
-		int tong=0;
-		for(int j=0;j<d;j++)
-		{
-			tong=tong+a[j][i];
-		}
-		file<<"tong cot thu "<<i+1<<tong<<endl;
-	}
-}
-int snt(int a)
-{
-	if(a<2) return 0;
-	for(int i=2;i<=sqrt(a);i++)
-	{
-		if(a%i==0) return 0;
-	}
-	return 1;
-}
-void ktr(int a[][50], int d, int c, ofstream &file)
-{
-	int le=0,chan=0,snto=0;
-	for(int i=0;i<d;i++)
-	{	
-		for(int j=0;j<c;j++)
-		{
-			if(snt(a[i][j])) snto++;
-			else if(a[i][j]%2==0) chan++;
-			else le++;
-		}
-	}
-	file<<"tong chan "<<chan<<endl;
-	file<<"tong le "<<le<<endl;
-	file<<"tong snt "<<snto<<endl;
-}
-int main()
-{
-	ifstream file;
-	int d,c;
-	int a[50][50];	
-	docfile(file,a,d,c);
-	
-	ofstream file1;
-	file1.open("output.txt");
-	file1<<tinhtong(a,d,c)<<endl;
-	tongdong(a,d,c,file1);
-	tongcot(a,d,c,file1);	
-	ktr(a,d,c,file1);
-	file1.close();
-	return 0;
-}
-
 
